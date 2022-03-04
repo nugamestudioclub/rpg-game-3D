@@ -14,6 +14,8 @@ public class CharacterAnimationController : MonoBehaviour
     public static string param_jumping = "Jumping";
     public static string param_falling = "Falling";
     public static string param_running = "Running";
+    public static string param_attack = "Attack";
+    public static string param_attackNumber = "AttackNumber";
 
     
 
