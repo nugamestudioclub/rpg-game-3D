@@ -65,7 +65,7 @@ public class CharacterAnimationController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        TestUpdate();
+        //TestUpdate();
 
         anim.SetBool(param_waking, walking);
         anim.SetBool(param_running, running);
