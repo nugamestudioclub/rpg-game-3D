@@ -17,7 +17,9 @@ public class CharacterAnimationController : MonoBehaviour
     public static string param_attack = "Attack";
     public static string param_attackNumber = "AttackNumber";
 
-    
+    [Tooltip("'horizontal','vertical' for walking, 'running' for running, 'jump' for jumping")]
+    [SerializeField]
+    private bool inputEnabled;
 
     // Start is called before the first frame update
     void Start()
@@ -32,7 +34,8 @@ public class CharacterAnimationController : MonoBehaviour
     public void Jump(bool onGround=false)
     {
         this.jumping = true;
-        this.falling = onGround;
+        if(onGround)
+            this.falling = onGround;
 
         anim.SetBool(param_jumping, jumping);
     }
@@ -43,6 +46,11 @@ public class CharacterAnimationController : MonoBehaviour
     public void StopFall()
     {
         this.falling = false;
+    }
+
+    public void StartFall()
+    {
+        this.falling = true;
     }
     
     public void Walk()
@@ -68,6 +76,8 @@ public class CharacterAnimationController : MonoBehaviour
     void Update()
     {
         //TestUpdate();
+        if (this.inputEnabled)
+            this.inputUpdate();
 
         anim.SetBool(param_waking, walking);
         anim.SetBool(param_running, running);
@@ -100,5 +110,33 @@ public class CharacterAnimationController : MonoBehaviour
         {
             this.Jump(false);
         }
+    }
+
+
+    private void inputUpdate()
+    {
+        float x = Input.GetAxis("Horizontal");
+        float y = Input.GetAxis("Vertical");
+        if (Mathf.Abs(x) > 0 || Mathf.Abs(y) > 0)
+        {
+            if (Input.GetButton("Running"))
+            {
+                this.Run();
+            }
+            else
+            {
+                this.Walk();
+            }
+        }
+        else
+        {
+            this.Idle();
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            this.Jump();
+        }
+        
     }
 }

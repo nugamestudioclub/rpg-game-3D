@@ -20,6 +20,8 @@ public class TestMove : MonoBehaviour
     private Vector3 pPos;
 
     private bool isJumping = false;
+    [SerializeField]
+    private Transform onFloorPointer;
 
     // Start is called before the first frame update
     void Start()
@@ -65,18 +67,41 @@ public class TestMove : MonoBehaviour
         isRunning = Input.GetKey(KeyCode.LeftShift);
        
 
-        HandleAnim(x, y);
+       // HandleAnim(x, y);
         pPos = controller.transform.position;
+
+        RaycastHit hit;
+        Ray ray = new Ray();
+        ray.direction = -this.onFloorPointer.up;
+        ray.origin = this.onFloorPointer.position;
+        
+        if (!Physics.Raycast(ray,out hit))
+        {
+            anim.StartFall();
+        }
+        else
+        {
+            if (hit.distance > 0.5f)
+                anim.StartFall();
+            else
+                anim.StopFall();
+           
+        }
+
 
     }
 
 
-
+    /// <summary>
+    /// Example as how to implement the character animation controller outside the script.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
     private void HandleAnim(float x,float y)
     {
         if (Vector3.Distance(controller.transform.position,pPos)>Time.deltaTime*speed*0.8f)
         {
-            print("Running!");
+           
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 anim.Run();
