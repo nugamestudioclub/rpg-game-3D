@@ -6,6 +6,7 @@
 
 #### Sebastian H:
 - Animations Controller
+- 3D Modeling
 
 #### Jared:
 - 3D Movement
