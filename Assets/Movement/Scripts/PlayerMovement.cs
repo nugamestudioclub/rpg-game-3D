@@ -7,8 +7,11 @@ public class PlayerMovement : MonoBehaviour
 {
 
     [Header("Movement")]
-    public float moveSpeed = 60f;
-    [SerializeField] float airMultiplier = 0.4f; 
+    public float moveSpeed;
+    [SerializeField] float airMultiplier = 0.4f;
+    public float walkSpeed = 22f; 
+    public float sprintSpeed = 30f;
+    [SerializeField] KeyCode sprintKey = KeyCode.LeftShift;
 
     [Header("Drag")]
     float groundDrag = 6f;
@@ -45,9 +48,10 @@ public class PlayerMovement : MonoBehaviour
     {
         isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, 1, 0), groundDistance, groundMask);
 
-        print(isGrounded);
         HandleInput();
         ControlDrag();
+
+        Debug.Log(isGrounded);
 
         if (Input.GetKeyDown(jumpKey) && isGrounded)
         {
@@ -113,6 +117,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovePlayer()
     {
+        if (Input.GetKey(sprintKey))
+            moveSpeed = sprintSpeed;
+        else
+            moveSpeed = walkSpeed;
+
         if (isGrounded && !OnSlope())
         {
             // normalize move direction so it never goes past 1 on diagonal
