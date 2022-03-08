@@ -21,10 +21,15 @@ public class CharacterAnimationController : MonoBehaviour
     [SerializeField]
     private bool inputEnabled;
 
+    [Tooltip("Requires a parent object")]
+    [SerializeField]
+    private bool directionEnabled;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (this.directionEnabled)
+            this.directionStart();
     }
 
     /// <summary>
@@ -71,6 +76,11 @@ public class CharacterAnimationController : MonoBehaviour
         this.walking = false;
     }
 
+    public void Attack()
+    {
+        anim.SetTrigger("Attack");
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -78,6 +88,7 @@ public class CharacterAnimationController : MonoBehaviour
         //TestUpdate();
         if (this.inputEnabled)
             this.inputUpdate();
+        
 
         anim.SetBool(param_waking, walking);
         anim.SetBool(param_running, running);
@@ -139,4 +150,12 @@ public class CharacterAnimationController : MonoBehaviour
         }
         
     }
+
+    
+    private void directionStart()
+    {
+        //this.transform.parent.gameObject.AddComponent<DirectionAnimationController>();
+
+    }
+
 }
