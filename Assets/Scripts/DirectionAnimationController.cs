@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class DirectionAnimationController : MonoBehaviour
 {
-    [SerializeField]
-    private CharacterController controller;
+    
     [SerializeField]
     private CharacterAnimationController anim;
 
@@ -26,6 +25,10 @@ public class DirectionAnimationController : MonoBehaviour
     private float x = 0;
     private float y = 0;
 
+    private float groundDistance = 0.4f;
+    [SerializeField] LayerMask groundMask;
+    private bool isGrounded = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,14 +44,9 @@ public class DirectionAnimationController : MonoBehaviour
             y = Input.GetAxis("Vertical");
         }
 
-        Vector3 movementVector = controller.transform.forward * y * Time.deltaTime * speed;
-        movementVector += controller.transform.right * x * Time.deltaTime * speed;
-        if (isRunning)
-        {
-            movementVector *= runningMultiplier;
-        }
+        
+       
 
-        controller.SimpleMove(-controller.transform.up * -9.8f * Time.deltaTime);
 
         lookAtPointer.transform.localPosition = Vector3.Lerp(new Vector3(x, 0, y), lookAtPointer.transform.localPosition, 0.5f);
         //anim.transform.LookAt(lookAtPointer);
@@ -63,13 +61,13 @@ public class DirectionAnimationController : MonoBehaviour
         isRunning = Input.GetKey(KeyCode.LeftShift);
 
 
-        // HandleAnim(x, y);
-        pPos = controller.transform.position;
-
+       
         RaycastHit hit;
         Ray ray = new Ray();
         ray.direction = -this.onFloorPointer.up;
         ray.origin = this.onFloorPointer.position;
+
+        
 
         if (!Physics.Raycast(ray, out hit))
         {
