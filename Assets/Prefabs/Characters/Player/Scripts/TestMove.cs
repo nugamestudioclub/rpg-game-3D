@@ -4,78 +4,114 @@ using UnityEngine;
 
 public class TestMove : MonoBehaviour
 {
-    [SerializeField]
-    private CharacterController controller;
-    [SerializeField]
-    private CharacterAnimationController anim;
+    [SerializeField] private CharacterController controller;
+    [SerializeField] private CharacterAnimationController anim;
 
+    // Walk/Run variables
+    [SerializeField] private float speed = 1f;
+    [SerializeField] private float runningMultiplier = 2f;
     private bool isRunning = false;
-    [SerializeField]
-    private float speed = 1f;
-    [SerializeField]
-    private float runningMultiplier = 2f;
 
-    [SerializeField]
-    private Transform lookAtPointer;
+    [SerializeField] private Transform lookAtPointer;
     private Vector3 pPos;
 
+    // Jump variables
     private bool isJumping = false;
-    [SerializeField]
-    private Transform onFloorPointer;
+    [SerializeField] public float jumpSpeed = 3f;
+    [SerializeField] public float runningJumpSpeed = 4f;
+    private float ySpeed;
+    private float originalStepOffset; 
+    private float jumpTimer; 
+
+    [SerializeField] private Transform onFloorPointer;
+    
+    private float horizontalInput = 0;
+    private float verticalInput = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         pPos = transform.position;
+        originalStepOffset = controller.stepOffset; 
     }
-
-    private float x = 0;
-    private float y = 0;
 
     // Update is called once per frame
     void Update()
     {
+        // If player is not jumping, gets the inputs
         if (!isJumping)
         {
-            x = Input.GetAxis("Horizontal");
-            y = Input.GetAxis("Vertical");
+            horizontalInput = Input.GetAxis("Horizontal");
+            verticalInput = Input.GetAxis("Vertical");
         }
-       
-        Vector3 movementVector = controller.transform.forward * y * Time.deltaTime*speed;
-        movementVector += controller.transform.right * x * Time.deltaTime*speed;
+      
+        // Handle jumping
+        ySpeed += Physics.gravity.y * Time.deltaTime;
+
+        // Check if player is running
+        isRunning = Input.GetKey(KeyCode.LeftShift);
+
+        jumpTimer += Time.deltaTime;
+        // If controller is grounded
+        if (controller.isGrounded)
+        {
+            // enable default step offset
+            controller.stepOffset = originalStepOffset;
+
+            ySpeed = -.5f; // reset gravity 
+
+            if (Input.GetButtonDown("Jump") && jumpTimer > 1f)
+            {
+                jumpTimer = 0;
+
+                if (isRunning)
+                    ySpeed = runningJumpSpeed; // set y value to the jump speed
+                else
+                    ySpeed = jumpSpeed; // set y value to the jump speed
+            }
+        } 
+        else
+        {
+            // disable step offset when not grounded
+            controller.stepOffset = 0;
+        }
+        
+        // Find the movement vector 
+        Vector3 movementVector = controller.transform.forward * verticalInput * speed;
+        movementVector += controller.transform.right * horizontalInput * speed;
+        
+        // If the player is running, multiply vector by running multiplier
         if (isRunning)
         {
             movementVector *= runningMultiplier;
         }
-
        
-        controller.Move(movementVector);
+        // Update vectors y value based on gravity/jumping speed
+        movementVector.y = ySpeed;
+
+        // Move player
+        controller.Move(movementVector * Time.deltaTime);
         
+        // Rotate player 
+        lookAtPointer.transform.localPosition = Vector3.Lerp(new Vector3(horizontalInput, 0, verticalInput), lookAtPointer.transform.localPosition,0.5f);
         
-        controller.SimpleMove(-controller.transform.up * -9.8f*Time.deltaTime);
-        
-        lookAtPointer.transform.localPosition = Vector3.Lerp(new Vector3(x, 0, y), lookAtPointer.transform.localPosition,0.5f);
-        //anim.transform.LookAt(lookAtPointer);
-        if (Mathf.Abs(x) > 0 || Mathf.Abs(y) > 0)
+        if (Mathf.Abs(horizontalInput) > 0 || Mathf.Abs(verticalInput) > 0)
         {
             var rotation = Quaternion.LookRotation(lookAtPointer.position - anim.transform.position);
             anim.transform.rotation = Quaternion.Slerp(anim.transform.rotation, rotation, Time.deltaTime * 8f);
 
         }
 
-        
-        isRunning = Input.GetKey(KeyCode.LeftShift);
-       
-
-       // HandleAnim(x, y);
+        // HandleAnim(x, y);
         pPos = controller.transform.position;
 
+        // Check if player is grounded, play falling animation if not grounded
         RaycastHit hit;
         Ray ray = new Ray();
         ray.direction = -this.onFloorPointer.up;
         ray.origin = this.onFloorPointer.position;
         
-        if (!Physics.Raycast(ray,out hit))
+        if (!Physics.Raycast(ray, out hit))
         {
             anim.StartFall();
         }
@@ -85,7 +121,6 @@ public class TestMove : MonoBehaviour
                 anim.StartFall();
             else
                 anim.StopFall();
-           
         }
         if (Input.GetMouseButtonDown(0))
         {
@@ -94,17 +129,15 @@ public class TestMove : MonoBehaviour
 
     }
 
-
     /// <summary>
     /// Example as how to implement the character animation controller outside the script.
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    private void HandleAnim(float x,float y)
+    private void HandleAnim(float x, float y)
     {
-        if (Vector3.Distance(controller.transform.position,pPos)>Time.deltaTime*speed*0.8f)
+        if (Vector3.Distance(controller.transform.position, pPos)> Time.deltaTime * speed * 0.8f)
         {
-           
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 anim.Run();
@@ -113,19 +146,18 @@ public class TestMove : MonoBehaviour
             {
                 anim.Walk();
             }
-
-
         }
         else
         {
             anim.Idle();
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && jumpTimer > 1f)
         {
             anim.Jump(false);
         }
-        if (Input.GetMouseButtonDown(0)){
+        if (Input.GetMouseButtonDown(0)) 
+        {
             anim.Attack();
         }
     }
