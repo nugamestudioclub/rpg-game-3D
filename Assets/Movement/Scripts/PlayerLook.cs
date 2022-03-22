@@ -8,6 +8,7 @@ public class PlayerLook : MonoBehaviour
     [SerializeField] private float sensX;
     [SerializeField] private float sensY;
 
+
     Camera cam;
 
     float mouseX;
@@ -15,14 +16,19 @@ public class PlayerLook : MonoBehaviour
 
     float multiplier = 0.01f;
 
-    float xRotation;
-    float yRotation; 
+    float xRotation = 0;
+    float yRotation = 0;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
         cam = GetComponentInChildren<Camera>();
+        if (cam == null)
+        {
+            cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        }
 
         // Lock cursor
         Cursor.lockState = CursorLockMode.Locked;
@@ -33,7 +39,8 @@ public class PlayerLook : MonoBehaviour
     void Update()
     {
         HandleInput();
-
+        
+       
         cam.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
 
         // only want player to rotate on y axis

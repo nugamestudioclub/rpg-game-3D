@@ -20,19 +20,20 @@ public class TestMove : MonoBehaviour
     [SerializeField] public float jumpSpeed = 3f;
     [SerializeField] public float runningJumpSpeed = 4f;
     private float ySpeed;
-    private float originalStepOffset; 
-    private float jumpTimer; 
+    private float originalStepOffset;
+    private float jumpTimer;
 
     [SerializeField] private Transform onFloorPointer;
-    
+
     private float horizontalInput = 0;
     private float verticalInput = 0;
+    [SerializeField] private Camera cam;
 
     // Start is called before the first frame update
     void Start()
     {
         pPos = transform.position;
-        originalStepOffset = controller.stepOffset; 
+        originalStepOffset = controller.stepOffset;
     }
 
     // Update is called once per frame
@@ -44,7 +45,7 @@ public class TestMove : MonoBehaviour
             horizontalInput = Input.GetAxis("Horizontal");
             verticalInput = Input.GetAxis("Vertical");
         }
-      
+
         // Handle jumping
         ySpeed += Physics.gravity.y * Time.deltaTime;
 
@@ -69,32 +70,36 @@ public class TestMove : MonoBehaviour
                 else
                     ySpeed = jumpSpeed; // set y value to the jump speed
             }
-        } 
+        }
         else
         {
             // disable step offset when not grounded
             controller.stepOffset = 0;
         }
-        
+
+        Vector3 maskedForward = new Vector3(cam.transform.forward.x, 0, cam.transform.forward.z);
+        Vector3 maskedRight = new Vector3(cam.transform.right.x, 0, cam.transform.right.z);
         // Find the movement vector 
-        Vector3 movementVector = controller.transform.forward * verticalInput * speed;
-        movementVector += controller.transform.right * horizontalInput * speed;
-        
+        Vector3 movementVector = maskedForward * verticalInput * speed;
+        movementVector += maskedRight * horizontalInput * speed;
+
         // If the player is running, multiply vector by running multiplier
         if (isRunning)
         {
             movementVector *= runningMultiplier;
         }
-       
+
         // Update vectors y value based on gravity/jumping speed
         movementVector.y = ySpeed;
 
         // Move player
         controller.Move(movementVector * Time.deltaTime);
-        
+
         // Rotate player 
-        lookAtPointer.transform.localPosition = Vector3.Lerp(new Vector3(horizontalInput, 0, verticalInput), lookAtPointer.transform.localPosition,0.5f);
-        
+        //lookAtPointer.transform.localPosition = Vector3.Lerp(new Vector3(cam.transform.forward.x*horizontalInput, 0, cam.transform.forward.y*verticalInput),lookAtPointer.transform.localPosition,0.5f);
+        //lookAtPointer.transform.localPosition = Vector3.Lerp(new Vector3(horizontalInput, 0, verticalInput), lookAtPointer.transform.localPosition, 0.5f);
+        lookAtPointer.transform.localPosition = maskedForward * verticalInput + cam.transform.right * horizontalInput;
+
         if (Mathf.Abs(horizontalInput) > 0 || Mathf.Abs(verticalInput) > 0)
         {
             var rotation = Quaternion.LookRotation(lookAtPointer.position - anim.transform.position);
@@ -110,7 +115,7 @@ public class TestMove : MonoBehaviour
         Ray ray = new Ray();
         ray.direction = -this.onFloorPointer.up;
         ray.origin = this.onFloorPointer.position;
-        
+
         if (!Physics.Raycast(ray, out hit))
         {
             anim.StartFall();
@@ -136,7 +141,7 @@ public class TestMove : MonoBehaviour
     /// <param name="y"></param>
     private void HandleAnim(float x, float y)
     {
-        if (Vector3.Distance(controller.transform.position, pPos)> Time.deltaTime * speed * 0.8f)
+        if (Vector3.Distance(controller.transform.position, pPos) > Time.deltaTime * speed * 0.8f)
         {
             if (Input.GetKey(KeyCode.LeftShift))
             {
@@ -156,7 +161,7 @@ public class TestMove : MonoBehaviour
         {
             anim.Jump(false);
         }
-        if (Input.GetMouseButtonDown(0)) 
+        if (Input.GetMouseButtonDown(0))
         {
             anim.Attack();
         }
