@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
-  m_Name: Box Volume Profile
+  m_Name: Cave Volume Profile
   m_EditorClassIdentifier: 
   components:
-  - {fileID: 4915827283166607559}
---- !u!114 &4915827283166607559
+  - {fileID: 4017871901669558756}
+--- !u!114 &4017871901669558756
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -74,7 +74,7 @@ MonoBehaviour:
     m_Value: 151.2
   meanFreePath:
     m_OverrideState: 1
-    m_Value: 122
+    m_Value: 25.43
     min: 1
   enableVolumetricFog:
     m_OverrideState: 1
@@ -95,7 +95,7 @@ MonoBehaviour:
     m_Value: 145
     min: 0.1
   denoisingMode:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 2
   anisotropy:
     m_OverrideState: 0

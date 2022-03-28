@@ -122,7 +122,7 @@ public class TestMove : MonoBehaviour
         }
         else
         {
-            if (hit.distance > 0.5f)
+            if (hit.distance > 1f)
                 anim.StartFall();
             else
                 anim.StopFall();
