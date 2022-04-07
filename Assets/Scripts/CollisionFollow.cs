@@ -6,19 +6,20 @@ public class CollisionFollow : MonoBehaviour
 {
     [SerializeField]
     private Transform player;
-    private Vector3 startOffset;
-    private Vector3 curOffset;
-    [SerializeField]
-    private float closeOffset = 0.3f;
+    private Vector3 cameraOffset;
+    private float cameraOffsetMag;
+   
+    private float height;
+
+    private RaycastHit hit;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
-
-        startOffset = this.transform.position - player.position;
-        curOffset = startOffset;
+        this.cameraOffset = transform.localPosition;
+        height = this.transform.position.y - this.transform.parent.parent.transform.position.y;
+        cameraOffsetMag = this.cameraOffset.magnitude;
         
 
     }
@@ -30,27 +31,16 @@ public class CollisionFollow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Ray ray = new Ray();
-        ray.origin = player.transform.position;
-        ray.direction = this.transform.position - player.transform.position;
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit,layer))
-        {
-            curDist = Vector3.Distance(hit.point, player.transform.position);
-            maxDist = Vector3.Distance(this.startOffset + player.transform.position, player.transform.position);
-            offsetDist = Vector3.Distance(curOffset + player.transform.position, player.transform.position);
-            if (curDist <= offsetDist)
-            {
-                curOffset = startOffset.normalized * Mathf.Clamp(curDist-this.closeOffset,0.0001f,maxDist);
 
-            }
-            else
-            {
-                curOffset = startOffset.normalized * (Mathf.Clamp(curDist - this.closeOffset, 0.0001f, maxDist));
-            }
+        Vector3 curOffsetPos = cameraOffset.normalized * this.cameraOffsetMag;
+        if (Physics.Linecast(this.transform.parent.parent.position, curOffsetPos,out hit))
+        {
 
         }
-        this.transform.localPosition = curOffset;
+        else{
+            
+        }
+        
 
     }
 }

@@ -24,6 +24,8 @@ public class CharacterAnimationController : MonoBehaviour
     [Tooltip("Requires a parent object")]
     [SerializeField]
     private bool directionEnabled;
+    [SerializeField]
+    private Light headlamp;
 
     // Start is called before the first frame update
     void Start()
@@ -88,6 +90,11 @@ public class CharacterAnimationController : MonoBehaviour
         //TestUpdate();
         if (this.inputEnabled)
             this.inputUpdate();
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            this.headlamp.gameObject.SetActive(!this.headlamp.gameObject.activeInHierarchy);
+        }
         
 
         anim.SetBool(param_waking, walking);

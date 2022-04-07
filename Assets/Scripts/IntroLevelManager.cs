@@ -5,7 +5,9 @@ using UnityEngine;
 public class IntroLevelManager : MonoBehaviour
 {
     [SerializeField]
-    private FloorCollapseComponent collapseComponent;
+    private FloorCollapseComponent[] collapseComponent;
+    [SerializeField]
+    private CameraShaker cameraShaker;
 
     private bool startEarthQuake = false;
     /// <summary>
@@ -15,6 +17,11 @@ public class IntroLevelManager : MonoBehaviour
     private float earthQuakeLength;
 
     private float quakeStartTime = 0;
+    [SerializeField]
+    private bool startEvent = false;
+
+    private bool eventStarted = false;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -26,18 +33,33 @@ public class IntroLevelManager : MonoBehaviour
     {
         this.startEarthQuake = true;
         this.quakeStartTime = Time.time;
+        this.cameraShaker.duration = earthQuakeLength;
+        this.cameraShaker.StartShake();
+
     }
 
 
     // Update is called once per frame
     void Update()
     {
+
+        if (this.startEvent != this.eventStarted||Input.GetKeyDown(KeyCode.U))
+        {
+            this.StartQuake();
+            this.startEvent = true;
+            this.eventStarted = true;
+        }
+
         if (this.startEarthQuake)
         {
             float deltaTime = Time.time - this.quakeStartTime;
             if (deltaTime >= earthQuakeLength)
             {
-                collapseComponent.Release();
+                foreach(FloorCollapseComponent component in collapseComponent)
+                {
+                    component.Release();
+                }
+                
                 this.startEarthQuake = false;
             }
 

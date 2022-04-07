@@ -19,6 +19,8 @@ public class PlayerLook : MonoBehaviour
     float xRotation = 0;
     float yRotation = 0;
 
+    [SerializeField]
+    private GameObject parent2;
 
 
     // Start is called before the first frame update
@@ -41,7 +43,8 @@ public class PlayerLook : MonoBehaviour
         HandleInput();
         
        
-        cam.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        //cam.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        parent2.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
 
         // only want player to rotate on y axis
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
