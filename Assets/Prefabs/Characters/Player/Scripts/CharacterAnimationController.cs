@@ -26,12 +26,22 @@ public class CharacterAnimationController : MonoBehaviour
     private bool directionEnabled;
     [SerializeField]
     private Light headlamp;
+    [SerializeField]
+    private MeshRenderer headlampRenderer;
+    [SerializeField]
+    private string materialName = "HeadlampGlow";
+
+    private float startingIntensity = 0;
+    private Color startColor;
 
     // Start is called before the first frame update
     void Start()
     {
         if (this.directionEnabled)
             this.directionStart();
+        startColor = headlampRenderer.materials[1].GetColor("_EmissiveColor");
+        this.startingIntensity = Mathf.Sqrt(new Vector3(startColor.r, startColor.g, startColor.b).magnitude);
+        print("Starting intensity:" + this.startingIntensity);
     }
 
     /// <summary>
@@ -94,6 +104,17 @@ public class CharacterAnimationController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             this.headlamp.gameObject.SetActive(!this.headlamp.gameObject.activeInHierarchy);
+            if (this.headlamp.gameObject.activeInHierarchy)
+            {
+                print("Assigning new value");
+                
+                this.headlampRenderer.materials[1].SetColor("_EmissiveColor", startColor);
+            }
+            else
+            {
+                Color c = this.headlampRenderer.materials[1].GetColor("_EmissiveColor");
+                this.headlampRenderer.materials[1].SetColor("_EmissiveColor", c*0f);
+            }
         }
         
 
