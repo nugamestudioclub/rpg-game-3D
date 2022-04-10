@@ -7,6 +7,7 @@ public class FloorCollapseComponent : MonoBehaviour
     [SerializeField]
     private float rotateMag = 1f;
     private Rigidbody rb;
+    private Collider col;
     private bool released = false;
 
     private float rotateX;
@@ -16,6 +17,7 @@ public class FloorCollapseComponent : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
         
         this.rotateMag = Random.Range(-1, 1) * this.rotateMag;
         this.rotateX = Random.Range(-1, 1) * this.rotateMag;
@@ -24,8 +26,15 @@ public class FloorCollapseComponent : MonoBehaviour
 
     public void Release()
     {
+        col.enabled = false;
         rb.isKinematic = false;
+        
         this.released = true;
+    }
+
+    public void Disable()
+    {
+        this.gameObject.SetActive(false);
     }
 
     // Update is called once per frame

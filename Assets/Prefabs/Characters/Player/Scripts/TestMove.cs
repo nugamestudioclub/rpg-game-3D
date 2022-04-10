@@ -102,9 +102,11 @@ public class TestMove : MonoBehaviour
 
         if (Mathf.Abs(horizontalInput) > 0 || Mathf.Abs(verticalInput) > 0)
         {
+            
             var rotation = Quaternion.LookRotation(lookAtPointer.position - anim.transform.position);
+            
             anim.transform.rotation = Quaternion.Slerp(anim.transform.rotation, rotation, Time.deltaTime * 8f);
-
+           
         }
 
         // HandleAnim(x, y);

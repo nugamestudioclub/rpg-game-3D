@@ -22,6 +22,12 @@ public class PlayerLook : MonoBehaviour
     [SerializeField]
     private GameObject parent2;
 
+    [SerializeField]
+    public bool overrideEnabled;
+    [SerializeField]
+    private Transform overrideLocationDirection;
+    private Vector3 pOverridePos;
+    private Quaternion pOverrideRot;
 
     // Start is called before the first frame update
     void Start()
@@ -34,20 +40,60 @@ public class PlayerLook : MonoBehaviour
 
         // Lock cursor
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false; 
+        Cursor.visible = false;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        HandleInput();
-        
-       
-        //cam.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
-        parent2.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        if (!overrideEnabled)
+        {
+            HandleInput();
 
-        // only want player to rotate on y axis
-        transform.rotation = Quaternion.Euler(0, yRotation, 0);
+            //cam.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+            parent2.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+
+            // only want player to rotate on y axis
+            transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        }
+        else
+        {
+            this.cam.transform.position = Vector3.MoveTowards(this.cam.transform.position,this.overrideLocationDirection.position,Time.deltaTime);
+            this.cam.transform.rotation = Quaternion.RotateTowards(this.cam.transform.rotation, this.overrideLocationDirection.rotation, Time.deltaTime*180f);
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (this.overrideEnabled)
+            {
+                this.DisableOverride();
+
+            }
+            else
+            {
+                this.EnableOverride(overrideLocationDirection);
+            }
+        }
+    }
+
+    public void EnableOverride(Transform posdir)
+    {
+        pOverridePos = cam.transform.localPosition;
+        pOverrideRot = cam.transform.localRotation;
+        
+        this.overrideEnabled = true;
+        this.overrideLocationDirection = posdir;
+
+
+    }
+    public void DisableOverride()
+    {
+        this.overrideEnabled = false;
+        this.cam.transform.localPosition = pOverridePos;
+        this.cam.transform.localRotation = pOverrideRot;
+        
+        
     }
 
     void HandleInput()

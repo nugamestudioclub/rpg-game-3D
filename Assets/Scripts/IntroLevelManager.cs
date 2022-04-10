@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class IntroLevelManager : MonoBehaviour
 {
@@ -21,7 +22,20 @@ public class IntroLevelManager : MonoBehaviour
     private bool startEvent = false;
 
     private bool eventStarted = false;
-    
+
+    [SerializeField]
+    private Animator playerAnim;
+
+    [SerializeField]
+    private float timeUntilSceneTransition = 10f;
+    [SerializeField]
+    private float fadeOutDuration = 1f;
+    [SerializeField]
+    private Animator UIAnimator;
+    [SerializeField]
+    private Canvas UICoverCanvas;
+    [SerializeField]
+    private string nextSceneName;
 
     // Start is called before the first frame update
     void Start()
@@ -35,7 +49,7 @@ public class IntroLevelManager : MonoBehaviour
         this.quakeStartTime = Time.time;
         this.cameraShaker.duration = earthQuakeLength;
         this.cameraShaker.StartShake();
-
+        //playerAnim.SetTrigger("UnexpectedFall");
     }
 
 
@@ -59,11 +73,36 @@ public class IntroLevelManager : MonoBehaviour
                 {
                     component.Release();
                 }
-                
+                StartCoroutine(disableAllFloorsAfter(1));
+                StartCoroutine(waitForSceneTransition(this.timeUntilSceneTransition,fadeOutDuration));
                 this.startEarthQuake = false;
             }
 
         }
 
+    }
+
+    private IEnumerator disableAllFloorsAfter(float time)
+    {
+        yield return new WaitForSeconds(time);
+        foreach (FloorCollapseComponent component in collapseComponent)
+        {
+            component.Disable();
+        }
+    }
+
+    private IEnumerator sceneTransition(float time)
+    {
+        yield return new WaitForSeconds(time);
+        SceneManager.LoadScene(this.nextSceneName);
+    }
+
+    private IEnumerator waitForSceneTransition(float time,float fadeOutDuration)
+    {
+        
+        
+        yield return new WaitForSeconds(time);
+        UICoverCanvas.gameObject.SetActive(true);
+        StartCoroutine(sceneTransition(fadeOutDuration));
     }
 }

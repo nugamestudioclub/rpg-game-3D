@@ -83,7 +83,7 @@ public class CharacterAnimationController : MonoBehaviour
     public void Idle()
     {
         this.running = false;
-        this.falling = false;
+        //this.falling = false;
         this.jumping = false;
         this.walking = false;
     }
