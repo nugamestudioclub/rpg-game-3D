@@ -15,14 +15,18 @@ public class TargetStoneComponent : MonoBehaviour
 
     public void Call()
     {
-        this.referenceAnimator.SetTrigger(enableAnimationTrigger);
+        if (referenceAnimator != null)
+            this.referenceAnimator.SetTrigger(enableAnimationTrigger);
         this.called = true;
+        print("CALLED!");
     }
    
     public void UnCall()
     {
-        this.referenceAnimator.SetTrigger(disableAnimationTrigger);
+        if(referenceAnimator!=null)
+            this.referenceAnimator.SetTrigger(disableAnimationTrigger);
         this.called = false;
+        print("UNCALLED!");
     }
 
     // Start is called before the first frame update

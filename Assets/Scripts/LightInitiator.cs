@@ -12,15 +12,18 @@ public class LightInitiator : MonoBehaviour
 
     private TargetStoneComponent[] components;
     private Dictionary<TargetStoneComponent, bool> calledComponents = new Dictionary<TargetStoneComponent, bool>();
+    private LayerMask targetLayer;
 
     // Start is called before the first frame update
     void Start()
     {
+        targetLayer = LayerMask.GetMask("LightTargeting");
         ray = new Ray();
         components = (TargetStoneComponent[])GameObject.FindObjectsOfType(typeof(TargetStoneComponent));
         foreach(TargetStoneComponent component in components)
         {
-            calledComponents.Add(component, false);
+            if(component.enabled)
+                calledComponents.Add(component, false);
         }
     }
 
@@ -31,11 +34,16 @@ public class LightInitiator : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        foreach(TargetStoneComponent component in components)
+        {
+            calledComponents[component] = false;
+        }
+
         for(int i =0; i < lights.Length; i++)
         {
             ray.origin = lights[i].transform.position;
             ray.direction = lights[i].transform.forward;
-            if(Physics.Raycast(ray,out hit))
+            if(Physics.Raycast(ray,out hit,this.targetLayer))
             {
                 TargetStoneComponent component;
                 if((component=hit.transform.gameObject.GetComponent<TargetStoneComponent>())!=null||
@@ -44,23 +52,26 @@ public class LightInitiator : MonoBehaviour
                     if (!component.IsCalled)
                     {
                         component.Call();
-                        calledComponents[component] = true;
+                        
                     }
                     
+                    calledComponents[component] = true;
+
                 }
+
             }
+           
 
         }
         foreach(TargetStoneComponent component in this.calledComponents.Keys)
         {
-            if (this.calledComponents[component])
+            
+            if (!this.calledComponents[component])
             {
-                
-            }
-            else
-            {
+                print("Component:" + component.gameObject.name);
                 component.UnCall();
             }
+         
         }
     }
 }

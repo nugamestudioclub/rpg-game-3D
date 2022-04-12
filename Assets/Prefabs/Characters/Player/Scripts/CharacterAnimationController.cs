@@ -106,7 +106,7 @@ public class CharacterAnimationController : MonoBehaviour
             this.headlamp.gameObject.SetActive(!this.headlamp.gameObject.activeInHierarchy);
             if (this.headlamp.gameObject.activeInHierarchy)
             {
-                print("Assigning new value");
+                
                 
                 this.headlampRenderer.materials[1].SetColor("_EmissiveColor", startColor);
             }

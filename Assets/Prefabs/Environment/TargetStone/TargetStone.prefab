@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8407723865102317626}
   - component: {fileID: 7165132375882859110}
   - component: {fileID: 4484324337058326666}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TargetStone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,3 +110,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ef33aba408b0f84d9cd4992a7f974c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  referenceAnimator: {fileID: 0}
+  enableAnimationTrigger: 
+  disableAnimationTrigger: 
