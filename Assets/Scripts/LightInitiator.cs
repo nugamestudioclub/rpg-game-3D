@@ -14,9 +14,12 @@ public class LightInitiator : MonoBehaviour
     private Dictionary<TargetStoneComponent, bool> calledComponents = new Dictionary<TargetStoneComponent, bool>();
     private LayerMask targetLayer;
 
+    private float targetRot;
+
     // Start is called before the first frame update
     void Start()
     {
+        targetRot = transform.parent.localEulerAngles.z;
         targetLayer = LayerMask.GetMask("LightTargeting");
         ray = new Ray();
         components = (TargetStoneComponent[])GameObject.FindObjectsOfType(typeof(TargetStoneComponent));
@@ -31,6 +34,11 @@ public class LightInitiator : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void Rotate90()
+    {
+        this.targetRot += 90;
     }
     private void FixedUpdate()
     {
@@ -66,12 +74,14 @@ public class LightInitiator : MonoBehaviour
         foreach(TargetStoneComponent component in this.calledComponents.Keys)
         {
             
-            if (!this.calledComponents[component])
+            if (!this.calledComponents[component]&&component.IsCalled)
             {
                 print("Component:" + component.gameObject.name);
                 component.UnCall();
             }
          
         }
+        Vector3 targetVector = new Vector3(this.transform.parent.transform.localEulerAngles.x,this.transform.parent.transform.localEulerAngles.y,targetRot%360);
+        this.transform.parent.transform.localEulerAngles = Vector3.Slerp(this.transform.parent.transform.localEulerAngles,targetVector,Time.deltaTime);
     }
 }

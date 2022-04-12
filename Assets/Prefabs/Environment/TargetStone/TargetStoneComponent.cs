@@ -13,6 +13,7 @@ public class TargetStoneComponent : MonoBehaviour
     private bool called = false;
     public bool IsCalled { get { return this.called; } }
 
+
     public void Call()
     {
         if (referenceAnimator != null)
@@ -38,6 +39,6 @@ public class TargetStoneComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+       
     }
 }

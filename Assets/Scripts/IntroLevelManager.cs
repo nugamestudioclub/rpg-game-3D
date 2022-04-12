@@ -36,6 +36,12 @@ public class IntroLevelManager : MonoBehaviour
     private Canvas UICoverCanvas;
     [SerializeField]
     private string nextSceneName;
+    [SerializeField]
+    private LightInitiator pedestal;
+    [SerializeField]
+    private CharacterAnimationController player;
+    [SerializeField]
+    private float minDistanceToPedestal = 5f;
 
     // Start is called before the first frame update
     void Start()
@@ -78,6 +84,14 @@ public class IntroLevelManager : MonoBehaviour
                 this.startEarthQuake = false;
             }
 
+        }
+        if (Vector3.Distance(pedestal.transform.position,player.transform.position)<minDistanceToPedestal)
+        {
+            print("IN RANGE!!!");
+            if (Input.GetButtonDown("Interact"))
+            {
+                pedestal.Rotate90();
+            }
         }
 
     }

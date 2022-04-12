@@ -16,6 +16,7 @@ public class CharacterAnimationController : MonoBehaviour
     public static string param_running = "Running";
     public static string param_attack = "Attack";
     public static string param_attackNumber = "AttackNumber";
+    public static string param_interact = "Interact";
 
     [Tooltip("'horizontal','vertical' for walking, 'running' for running, 'jump' for jumping")]
     [SerializeField]
@@ -107,7 +108,6 @@ public class CharacterAnimationController : MonoBehaviour
             if (this.headlamp.gameObject.activeInHierarchy)
             {
                 
-                
                 this.headlampRenderer.materials[1].SetColor("_EmissiveColor", startColor);
             }
             else
@@ -151,7 +151,14 @@ public class CharacterAnimationController : MonoBehaviour
         }
     }
 
-
+    public void Interact()
+    {
+        this.walking = false;
+        this.runInEditMode = false;
+        this.falling = false;
+        this.jumping = false;
+        anim.SetTrigger(param_interact);
+    }
     private void inputUpdate()
     {
         float x = Input.GetAxis("Horizontal");
