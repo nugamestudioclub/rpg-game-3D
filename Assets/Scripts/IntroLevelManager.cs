@@ -9,6 +9,8 @@ public class IntroLevelManager : MonoBehaviour
     private FloorCollapseComponent[] collapseComponent;
     [SerializeField]
     private CameraShaker cameraShaker;
+    [SerializeField]
+    private TestMove playerMove;
 
     private bool startEarthQuake = false;
     /// <summary>
@@ -42,6 +44,8 @@ public class IntroLevelManager : MonoBehaviour
     private CharacterAnimationController player;
     [SerializeField]
     private float minDistanceToPedestal = 5f;
+    [SerializeField]
+    private Transform fallTargetPos;
 
     // Start is called before the first frame update
     void Start()
@@ -57,7 +61,14 @@ public class IntroLevelManager : MonoBehaviour
         this.cameraShaker.StartShake();
         //playerAnim.SetTrigger("UnexpectedFall");
     }
-
+    public void StartEvent()
+    {
+        this.StartQuake();
+        this.startEvent = true;
+        this.eventStarted = true;
+        
+        playerMove.MoveTowards(this.fallTargetPos.transform.position);
+    }
 
     // Update is called once per frame
     void Update()
@@ -117,8 +128,8 @@ public class IntroLevelManager : MonoBehaviour
 
     private IEnumerator waitForSceneTransition(float time,float fadeOutDuration)
     {
-        
-        
+
+        playerMove.lockInput = false;
         yield return new WaitForSeconds(time);
         UICoverCanvas.gameObject.SetActive(true);
         StartCoroutine(sceneTransition(fadeOutDuration));

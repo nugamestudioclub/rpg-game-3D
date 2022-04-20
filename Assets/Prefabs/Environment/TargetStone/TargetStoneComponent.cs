@@ -17,6 +17,14 @@ public class TargetStoneComponent : MonoBehaviour
     [SerializeField]
     public UnityEngine.Events.UnityEvent action;
 
+    [SerializeField]
+    private bool isFinal;
+    private string initEnable;
+    [SerializeField]
+    private IntroLevelManager initator;
+    [SerializeField]
+    private PlayerLook cameraInit;
+    
     public void Call()
     {
         
@@ -34,6 +42,7 @@ public class TargetStoneComponent : MonoBehaviour
 
     private TargetStoneComponent c1;
     private TargetStoneComponent c2;
+  
     public void Swap(TargetStoneComponent component1)
     {
         this.c1 = component1;
@@ -52,11 +61,13 @@ public class TargetStoneComponent : MonoBehaviour
         component1.referenceAnimator = thisAnim;
     }
    
+    
 
     // Start is called before the first frame update
     void Start()
     {
         this.pCalled = called;
+        this.initEnable = this.enableAnimationName;
     }
 
     // Update is called once per frame
@@ -80,6 +91,13 @@ public class TargetStoneComponent : MonoBehaviour
                 {
                     this.referenceAnimator.Play(enableAnimationName);
                     print("enabling "+enableAnimationName);
+                    if (enableAnimationName == this.initEnable&&this.isFinal&&!this.cameraInit.overrideEnabled)
+                    {
+                        this.initator.StartEvent();
+                        StartCoroutine(this.forceCamInOne());
+                        
+                    }
+                    
                 }
                     
                 if (action != null)
@@ -92,5 +110,11 @@ public class TargetStoneComponent : MonoBehaviour
             pCalled = called;
         }
 
+    }
+    
+    private IEnumerator forceCamInOne()
+    {
+        yield return new WaitForSeconds(1);
+        this.cameraInit.EnableSetOveride();
     }
 }

@@ -29,6 +29,11 @@ public class TestMove : MonoBehaviour
     private float verticalInput = 0;
     [SerializeField] private Camera cam;
 
+    
+    public bool lockInput = false;
+    private Vector3 targ;
+    private bool isTargeting = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -93,7 +98,18 @@ public class TestMove : MonoBehaviour
         movementVector.y = ySpeed;
 
         // Move player
-        controller.Move(movementVector * Time.deltaTime);
+        if (!lockInput)
+            controller.Move(movementVector * Time.deltaTime);
+        else if(this.isTargeting)
+        {
+            this.controller.transform.position = Vector3.MoveTowards(this.controller.transform.position,this.targ,Time.deltaTime*speed);
+            if (Vector3.Distance(this.controller.transform.position, this.targ) < 0.4f)
+            {
+                this.targ = this.transform.position;
+                this.lockInput = false;
+                this.isTargeting = false;
+            }
+        }
 
         // Rotate player 
         //lookAtPointer.transform.localPosition = Vector3.Lerp(new Vector3(cam.transform.forward.x*horizontalInput, 0, cam.transform.forward.y*verticalInput),lookAtPointer.transform.localPosition,0.5f);
@@ -136,6 +152,13 @@ public class TestMove : MonoBehaviour
 
     }
 
+    public void MoveTowards(Vector3 pos)
+    {
+        this.lockInput = true;
+        this.targ = pos;
+        this.isTargeting = true;
+        
+    }
     /// <summary>
     /// Example as how to implement the character animation controller outside the script.
     /// </summary>

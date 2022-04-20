@@ -20,6 +20,8 @@ public class LightInitiator : MonoBehaviour
     private int[] angles = new int[] {90,90,90,90};
     [SerializeField]
     private int angleIndex = 0;
+    
+
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +38,8 @@ public class LightInitiator : MonoBehaviour
 
 
     }
+
+
 
     // Update is called once per frame
     void Update()

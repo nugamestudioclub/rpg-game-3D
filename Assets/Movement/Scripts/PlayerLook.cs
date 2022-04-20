@@ -59,7 +59,7 @@ public class PlayerLook : MonoBehaviour
         }
         else
         {
-            this.cam.transform.position = Vector3.MoveTowards(this.cam.transform.position,this.overrideLocationDirection.position,Time.deltaTime);
+            this.cam.transform.position = Vector3.MoveTowards(this.cam.transform.position,this.overrideLocationDirection.gameObject.transform.position,Time.deltaTime*5f);
             this.cam.transform.rotation = Quaternion.RotateTowards(this.cam.transform.rotation, this.overrideLocationDirection.rotation, Time.deltaTime*180f);
         }
 
@@ -75,6 +75,10 @@ public class PlayerLook : MonoBehaviour
                 this.EnableOverride(overrideLocationDirection);
             }
         }
+    }
+    public void EnableSetOveride()
+    {
+        this.EnableOverride(overrideLocationDirection);
     }
 
     public void EnableOverride(Transform posdir)
