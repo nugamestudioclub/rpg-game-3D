@@ -15,11 +15,16 @@ public class LightInitiator : MonoBehaviour
     private LayerMask targetLayer;
 
     private float targetRot;
+    private float rotSpeed = 180f;
+    [SerializeField]
+    private int[] angles = new int[] {90,90,90,90};
+    [SerializeField]
+    private int angleIndex = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        targetRot = transform.parent.localEulerAngles.z;
+        targetRot = 0;
         targetLayer = LayerMask.GetMask("LightTargeting");
         ray = new Ray();
         components = (TargetStoneComponent[])GameObject.FindObjectsOfType(typeof(TargetStoneComponent));
@@ -28,17 +33,52 @@ public class LightInitiator : MonoBehaviour
             if(component.enabled)
                 calledComponents.Add(component, false);
         }
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (this.targetRot != 0)
+        {
+            if (this.targetRot > 0)
+            {
+                this.transform.parent.Rotate(0,0,rotSpeed*Time.deltaTime);
+                
+                this.targetRot -= rotSpeed*Time.deltaTime;
+                
+            }
+            else
+            {
+                this.transform.parent.Rotate(0, 0, rotSpeed*-Time.deltaTime);
+                this.targetRot += rotSpeed*Time.deltaTime;
+            }
+            
+        }
+        if (Mathf.Abs(this.targetRot)<2*this.rotSpeed*Time.deltaTime)
+        {
+            this.transform.parent.Rotate(0, 0, this.targetRot);
+            this.targetRot = 0;
+        }
     }
 
     public void Rotate90()
     {
-        this.targetRot += 90;
+        this.targetRot += this.angles[angleIndex];
+        this.angleIndex = (this.angleIndex + 1) % this.angles.Length;
+    }
+
+    public void RotateN90()
+    {
+
+        this.angleIndex = (this.angleIndex - 1) % this.angles.Length;
+        if (this.angleIndex == -1)
+        {
+            this.angleIndex = this.angles.Length - 1;
+        }
+        this.targetRot -= this.angles[angleIndex];
+        
     }
     private void FixedUpdate()
     {
@@ -57,9 +97,11 @@ public class LightInitiator : MonoBehaviour
                 if((component=hit.transform.gameObject.GetComponent<TargetStoneComponent>())!=null||
                     (component= hit.transform.gameObject.GetComponentInChildren<TargetStoneComponent>())!=null)
                 {
+                    component.Call();
                     if (!component.IsCalled)
                     {
                         component.Call();
+                        
                         
                     }
                     
@@ -81,7 +123,9 @@ public class LightInitiator : MonoBehaviour
             }
          
         }
-        Vector3 targetVector = new Vector3(this.transform.parent.transform.localEulerAngles.x,this.transform.parent.transform.localEulerAngles.y,targetRot%360);
-        this.transform.parent.transform.localEulerAngles = Vector3.Slerp(this.transform.parent.transform.localEulerAngles,targetVector,Time.deltaTime);
+
+        
+        //Vector3 targetVector = new Vector3(this.transform.parent.transform.localEulerAngles.x,this.transform.parent.transform.localEulerAngles.y,targetRot);
+        //this.transform.parent.transform.localEulerAngles = Vector3.Lerp(this.transform.parent.transform.localEulerAngles,targetVector,Time.deltaTime);
     }
 }

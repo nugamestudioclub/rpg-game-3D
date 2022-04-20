@@ -87,10 +87,14 @@ public class IntroLevelManager : MonoBehaviour
         }
         if (Vector3.Distance(pedestal.transform.position,player.transform.position)<minDistanceToPedestal)
         {
-            print("IN RANGE!!!");
-            if (Input.GetButtonDown("Interact"))
+            
+            if (Input.GetButtonDown("Interact")&&Input.GetAxis("Interact")>0)
             {
                 pedestal.Rotate90();
+            }
+            if (Input.GetButtonDown("Interact")&&Input.GetAxis("Interact")<0)
+            {
+                pedestal.RotateN90();
             }
         }
 
